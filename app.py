@@ -43,16 +43,20 @@ def mine():
 
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
-
+    """ 
+    Lag en ny transaksjon
+    """
     values = request.get_json()
 
     # Check that the required fields are in the POST'ed data
     required = ['sender', 'recipient', 'amount']
     if not all(k in values for k in required):
-        return "Missing values", 400
+        return "Mangler verdier", 400
 
     index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
-
+    if index == None:
+        return "Ikke nok penger i lommeboken"
+    
     response = {'message': 'Transaction will be added to Block '+str(index), }
     return jsonify(response), 201
     

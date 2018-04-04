@@ -41,6 +41,12 @@ class Blockchain(object):
         :param recipient: <str> Adressen til mottaker
         :param amount: <str> Verdi som sendes
         """
+        if sender == "0":
+            pass
+        
+        elif self.get_sum(sender) < amount:
+            return None
+
         self.current_transactions.append({
             'sender': sender,
             'recipient': recipient,
@@ -88,15 +94,29 @@ class Blockchain(object):
         guess_hash = hashlib.sha256(guess).hexdigest()
         return guess_hash[:4] == "0000"
 
-n
+    def get_sum(self, adress):
+        """
+        Summer sammen en adresse
+        """
+        chain = self.chain
+        sum = 0
+        for block in chain:
+            print("---")
+            if 'transactions' in block:
+                for trans in block['transactions']:
+                    if trans['recipient'] == adress:
+                        sum += trans['amount']
+                    if trans['sender'] == adress:
+                        sum -= trans['amount']
+
+        print(sum)
+        return sum
 
 if __name__ == "__main__":
     b = Blockchain()
-    lb = b.new_transaction('1','2','42')
-    print(lb)
 
-    lb = b.new_transaction('2','1','10')
-    print(lb)
+
+
 
 
     
