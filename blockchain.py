@@ -85,10 +85,10 @@ class Blockchain(object):
         Hvis hashen starter på 0000 er bevist gyldig.
         """
         guess = str(last_proof+proof).encode()
-        huess_hash = hashlib.sha256(guess).hexdigest()
-        return guest_hash[:4] == "0000"
+        guess_hash = hashlib.sha256(guess).hexdigest()
+        return guess_hash[:4] == "0000"
 
-
+n
 
 if __name__ == "__main__":
     b = Blockchain()
