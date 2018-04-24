@@ -69,6 +69,40 @@ def full_chain():
     }
     return jsonify(response)
 
-           
+@app.route('/nodes/register', methods=['POST'])
+def register_nodes():
+    values = request.get_json()
+
+    nodes = values.get('nodes')
+    if nodes is None:
+        return 'Feil: vennligst legg ved en liste med noder',400
+
+    for node in nodes:
+        blockchain.register_node(node)
+
+
+    response = {
+        'message':'Nye noder har blitt lagt til',
+        'total_nodes': list(blockchain.nodes)
+    }
+    return jsonify(response), 201
+
+@app.route('/nodes/resolve', methods=['GET'])
+def consensus():
+    replaced = blockchain.resolve_conflicts()
+
+    if replaced:
+        response = {
+            'message':'Vår kjede er byttet ut',
+            'new_chain':blockchain.chain
+        }
+    else:
+        response = {
+            'message':'Vi beholder vår kjede',
+            'chain':blockchain.chain
+        }
+
+    return jsonify(response), 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
