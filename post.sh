@@ -1,7 +1,7 @@
 
 
 curl -X POST -H "Content-Type: application/json" -d '{
- "sender": "409e39f088354681886408fecdafeb69",
+ "sender": "bd05b4989a7c4b53a5aeda5c56911546",
  "recipient": "42",
- "amount": 2
+ "amount": 5
 }' "http://localhost:5000/transactions/new"

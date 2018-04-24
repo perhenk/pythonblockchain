@@ -109,7 +109,6 @@ class Blockchain(object):
                     if trans['sender'] == adress:
                         sum -= trans['amount']
 
-        print(sum)
         return sum
 
 if __name__ == "__main__":
