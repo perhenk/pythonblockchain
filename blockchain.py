@@ -2,6 +2,7 @@ import hashlib
 import json
 from time import time
 from uuid import uuid4
+import requests
 
 class Blockchain(object):
 
@@ -9,7 +10,8 @@ class Blockchain(object):
     def __init__(self):
         self.chain = []
         self.current_transactions = []
-
+        self.nodes = set()
+        
         # lag skapelses (genesis) blokken
         self.new_block(previous_hash=1 , proof=100)
 
@@ -56,7 +58,6 @@ class Blockchain(object):
         return self.last_block['index'] + 1
 
 
-
     def proof_of_work(self, last_proof):
         """
         Regn ut proof og work
@@ -99,6 +100,7 @@ class Blockchain(object):
         guess_hash = hashlib.sha256(guess).hexdigest()
         return guess_hash[:4] == "0000"
 
+    
     def get_sum(self, adress):
         """
         Summer sammen en adresse
@@ -116,6 +118,78 @@ class Blockchain(object):
 
         return sum
 
+    #
+    # P2P funksjoner
+    #
+    
+    def register_node(self,address):
+        """
+        Legg til nye noder til listen
+        """
+        parsed_url = urlparse(address)
+        self.nodes.add(parsed_url.netloc)
+
+    def valid_chain(self, chain):
+        """
+        Finn ut om kjeden er en valid kjede
+
+        :param chain: <list> En blokkkjede
+        :return: <bool>
+        """
+        last_block = chain[0]
+        current_index = 1
+
+        while(current_index < len(chain)):
+            block = chain[current_index]
+            print(last_block)
+            print(block)
+            print("\n -------- \n")
+
+            # Sjekk om hash til blokk er korrekt
+            if(block["previous_hash"] != self.hash(last_block)):
+                return False
+
+            # Sjekk om proof og work er korrekt.
+            if not self.valid_proof(last_block['proof'], block['proof']):
+                return False
+           
+            last_block = block
+            current_index += 1
+           
+        return True
+
+
+    def resolve_conflicts(self):
+        """
+        Dette er konsensusalgoritmen
+
+        :bool: <bool> Sannt hvis blokken er erstattet
+        """
+        
+        neihbours = self.nodes
+        new_chain = None
+
+        # Hvis ser bare etter kjeder som er lengre enn vår
+        max_length = len(self.chain)
+        
+
+        for node in neihbours:
+            res = request.get('http://'+node+'/chain')
+
+            if res.status_code == 200:
+                length = res.json()["length"]
+                chain = res.json()["chain"]
+
+                if length > max_length and self.valid_chain(chain):
+                    max_length = length
+                    new_chain = chain
+
+        if new_chain:
+            self.chain = new_chain
+            return True
+
+        return False
+        
 if __name__ == "__main__":
     b = Blockchain()
 
