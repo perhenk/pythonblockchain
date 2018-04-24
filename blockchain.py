@@ -58,7 +58,9 @@ class Blockchain(object):
 
 
     def proof_of_work(self, last_proof):
-    
+        """
+        Regn ut proof og work
+        """
         proof = 0
         while self.valid_proof(last_proof, proof) is False:
             proof += 1
@@ -68,6 +70,9 @@ class Blockchain(object):
 
     @property
     def last_block(self):
+        """
+        Returner siste blokk
+        """
         return self.chain[-1]
     
 
