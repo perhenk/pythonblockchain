@@ -69,17 +69,17 @@ def full_chain():
     }
     return jsonify(response)
 
-@app.route('/nodes/register', methods=['POST'])
+@app.route('/nodes/register', methods=["POST"])
 def register_nodes():
-    values = request.get_json()
 
+    values = request.get_json()    
     nodes = values.get('nodes')
+    
     if nodes is None:
         return 'Feil: vennligst legg ved en liste med noder',400
-
+    
     for node in nodes:
         blockchain.register_node(node)
-
 
     response = {
         'message':'Nye noder har blitt lagt til',
@@ -105,4 +105,4 @@ def consensus():
     return jsonify(response), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5001)
